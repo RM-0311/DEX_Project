@@ -30,11 +30,13 @@ contract Exchange is ERC20 {
         uint256 ethBalance = address(this).balance;
         uint256 cryptoDevTokenReserve = getReserve();
         ERC20 cryptoDevToken = ERC20(cryptoDevTokenAddress);
+        // if Reserve is empty, intake any user supplied value because there is no ratio
         if (cryptoDevTokenReserve == 0) {
             cryptoDevToken.transferFrom(msg.sender, address(this), _amount);
             liquidity = ethBalance;
             _mint(msg.sender, liquidity);
         } else {
+            // only allow intake of liquidity at the defined ratio
             uint256 ethReserve = ethBalance - msg.value;
             uint256 cryptoDevTokenAmount = (msg.value * cryptoDevTokenReserve) /
                 (ethReserve);
@@ -51,5 +53,25 @@ contract Exchange is ERC20 {
             _mint(msg.sender, liquidity);
         }
         return liquidity;
+    }
+
+    /**
+    @dev REturns the amount Eth/crypto dev tokens that would be returned to the user
+    * in the swap
+    */
+    function removeLiquidity(uint _amount) public returns (uint, uint) {
+        require(_amount > 0, "_amount should be greater than 0");
+        uint ethReserve =  address(this).balance;
+        uint _totalSupply = totalSupply();
+        // Amount of Eth sent back to user is based on ratio
+        uint ethAmount = (ethReserve * _amount)/ _totalSupply;
+        // Amount of CDT returned is based on another ratio
+        uint cryptoDevTokenAmount = (getReserve() * _amount)/ _totalSupply;
+        // Burn the sent 'LP' tokens from the user's wallet because they are sent to remove liquidity
+        _burn(msg.sender, _amount);
+        payable(msg.sender).transfer(ethAmount);
+        // Transfer 'cryptoDevTokenAmount' of CDT from the user's wallet to the contract
+        ERC20(cryptoDevTokenAddress).transfer(msg.sender, cryptoDevTokenAmount);
+        return (ethAmount, cryptoDevTokenAmount);
     }
 }
