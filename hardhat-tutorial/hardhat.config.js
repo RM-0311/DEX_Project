@@ -7,10 +7,10 @@ const RINKEBY_PRIVATE_KEY = process.env.RINKEBY_PRIVATE_KEY;
 
 module.exports = {
   solidity: "0.8.4",
-  netowrks: {
+  networks: {
     rinkeby: {
       url: ALCHEMY_API_KEY_URL,
-      accounts: RINKEBY_PRIVATE_KEY,
+      accounts: [RINKEBY_PRIVATE_KEY],
     },
   },
 };
