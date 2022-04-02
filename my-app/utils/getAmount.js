@@ -30,3 +30,56 @@ export const getEtherBalance = async (
     return 0
   }
 }
+
+/**
+ * getCDTokensBalance: Retrieves the CD tokens in the account
+ * of the provided 'address'
+ */
+export const getCDTokensBalance = async (provider, address) => {
+  try {
+    const tokenContract = new Contract(
+      TOKEN_CONTRACT_ADDRESS,
+      TOKEN_CONTRACT_ABI,
+      provider
+    );
+    const balanceOfCryptoDevTOkens = await tokenContract.balanceOf(address);
+    return balanceOfCryptoDevTOkens;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ * getLPTokensBalance: Retrieves the amount of LP tokens in the account
+ */
+export const getLPTokensBalance = async (provider, address) => {
+  try {
+    const exchangeContract = new Contract(
+      EXCHANGE_CONTRACT_ADDRESS,
+      EXCHANGE_CONTRACT_ABI,
+      provider
+    );
+    const balanceOfLPTOkens = await exchangeContract.balanceOf(address);
+    return balanceOfLPTOkens;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+/**
+ * getReserveOfCDTokens: Retrieves the amount of CD tokens in the 
+ * exchange contract address
+ */
+export const getReserveOfCDTokens = asynnc (provider) => {
+  try {
+    const exchangeContract = new Contract(
+      EXCHANGE_CONTRACT_ADDRESS,
+      EXCHANGE_CONTRACT_ABI,
+      provider
+    );
+    const reserve = await exchangeContract.getReserve();
+    return reserve;
+  } catch (err) {
+    console.error(err);
+  }
+};
