@@ -70,7 +70,7 @@ export const getLPTokensBalance = async (provider, address) => {
  * getReserveOfCDTokens: Retrieves the amount of CD tokens in the 
  * exchange contract address
  */
-export const getReserveOfCDTokens = asynnc (provider) => {
+export const getReserveOfCDTokens = async (provider) => {
   try {
     const exchangeContract = new Contract(
       EXCHANGE_CONTRACT_ADDRESS,
