@@ -45,3 +45,49 @@ export const getAmountOfTokensReceivedFromSwap = async (
 
     return amountOfTokens;
 };
+
+/*
+    swapTokens: Swaps 'swapAmountWei' of Eth/Crypto Dev tokens with 'tokenToBeReceivedAfterSwap' amount of Eth/CD tokens
+*/
+export const swapTokens = async (
+        signer,
+    swapAmountWei,
+    tokenToBeReceivedAfterSwap,
+    ethSelected
+) => {
+    const exchangeContract = new Contract(
+        EXCHANGE_CONTRACT_ADDRESS,
+        EXCHANGE_CONTRACT_ABI,
+        signer
+    );
+    const tokenContract = new Contract(
+        TOKEN_CONTRACT_ADDRESS,
+        TOKEN_CONTRACT_ABI,
+        signer
+    );
+    let tx;
+    // If Eth is selected call the 'ethToCryptoDevToken' function else
+    // call the 'cryptoDevTokenToEth' function from the contract
+    // As you can see you need to pass the 'swapAmount' as a value to the function because
+    // It is the ether we are paying to the contract, instead of a value we are passing to the function
+    if (ethSelected) {
+        tx = await exchangeContract.ethToCryptoDevToken(
+            tokenToBeReceivedAfterSwap,
+            {
+                value: swapAmountWei,
+            }
+        );
+    } else {
+        // User has to approve 'swapAmountWei' for the contract
+        tx = await TOKEN_CONTRACT_ABI.approve(
+            EXCHANGE_CONTRACT_ADDRESS,
+            swapAmountWei.toString()
+        );
+        await tx.wait();
+        tx = await exchangeContract.cryptoDevTokenToEth(
+            swapAmountWei,
+            tokenToBeReceivedAfterSwap
+        );
+    }
+    await tx.wait();
+};
