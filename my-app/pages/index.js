@@ -39,7 +39,7 @@ export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false);
 
   /** 
-   * getAmounts call various functions to retrieve amounts for ethbalance,
+   * getAmounts call various functions to retrieve amounts for _ethBalance,
    * LP tokens etc
    */
   const getAmounts = async () => {
@@ -133,7 +133,7 @@ export default function Home() {
       // Convert the ether amount entered by the user to BigNumber
       const addEtherWei = utils.parseEther(addEther.toString());
       // Check if the values are zero
-      if (!addCDTokens.eq(zero)) && !addEtherWei.eq(zer)) {
+      if (!addCDTokens.eq(zero) && !addEtherWei.eq(zero)) {
         const signer = await getProviderOrSigner(true);
         setLoading(true);
         await addLiquidity(signer, addCDTokens, addEtherWei);

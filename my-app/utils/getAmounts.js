@@ -59,8 +59,8 @@ export const getLPTokensBalance = async (provider, address) => {
       EXCHANGE_CONTRACT_ABI,
       provider
     );
-    const balanceOfLPTOkens = await exchangeContract.balanceOf(address);
-    return balanceOfLPTOkens;
+    const balanceOfLPTokens = await exchangeContract.balanceOf(address);
+    return balanceOfLPTokens;
   } catch (err) {
     console.error(err);
   }
