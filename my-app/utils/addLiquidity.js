@@ -5,7 +5,6 @@ import {
     TOKEN_CONTRACT_ADDRESS,
     TOKEN_CONTRACT_ABI,
 } from "../constants";
-import { getEtherBalance } from "./getAmount";
 
 /**
  * addLiquidity helps add liquidity to the exchange,

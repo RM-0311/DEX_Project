@@ -286,18 +286,21 @@ export default function Home() {
            {utils.formatEther(lpBalance)} Crypto Dev LP tokens
          </div>
          <div>
-           {utils.parseEther(reservedCD.toString()).eq(zero) ? (
-             <div>
-               <input
+            {/* If reserved CD is zero, render the state for liquidity zero where we ask the user
+            who much initial liquidity he wants to add else just render the state where liquidity is not zero and
+            we calculate based on the `Eth` amount specified by the user how much `CD` tokens can be added */}
+            {utils.parseEther(reservedCD.toString()).eq(zero) ? (
+              <div>
+                <input
                   type="number"
                   placeholder="Amount of Ether"
                   onChange={(e) => setAddEther(e.target.value || "0")}
                   className={styles.input}
                 />
-                <input 
+                <input
                   type="number"
                   placeholder="Amount of CryptoDev tokens"
-                  onChange={(e) => 
+                  onChange={(e) =>
                     setAddCDTokens(
                       BigNumber.from(utils.parseEther(e.target.value || "0"))
                     )
@@ -308,15 +311,15 @@ export default function Home() {
                   Add
                 </button>
               </div>
-           ) : (
-             <div>
-               <input
+            ) : (
+              <div>
+                <input
                   type="number"
                   placeholder="Amount of Ether"
                   onChange={async (e) => {
                     setAddEther(e.target.value || "0");
-                    // calculate the number of CD tokens that 
-                    // can be added given 'e.target.value' amount of Eth
+                    // calculate the number of CD tokens that
+                    // can be added given  `e.target.value` amount of Eth
                     const _addCDTokens = await calculateCD(
                       e.target.value || "0",
                       etherBalanceContract,
@@ -324,10 +327,125 @@ export default function Home() {
                     );
                     setAddCDTokens(_addCDTokens);
                   }}
-                  className={styles.input}    
+                  className={styles.input}
+                />
+                <div className={styles.inputDiv}>
+                  {/* Convert the BigNumber to string using the formatEther function from ether.js */}
+                  {'You will need ${utils.formatEther(addCDTokens)} Crypto Dev Tokens'}
+                </div>
+                <button className={styles.button1} onClick={_addLiquidity}>
+                  Add
+                </button>
+              </div>
+            )}
+            <div>
+              <input
+                type="number"
+                placeholder="Amount of LP Tokens"
+                onChange={async (e) => {
+                  setRemoveLPTokens(e.target.value || "0");
+                  await _getTokensAfterRemove(e.target.value || "0");
+                }}
+                className={styles.input}
               />
-       </div>
-     )
-   }
- }
+              <div className={styles.inputDiv}>
+                {'You will get ${utils.formatEther(removeCD)} Crypto Dev Tokens and ${utils.formatEther(removeEther)} Eth'}
+              </div>
+              <button className={styles.button1} onClick={_removeLiquidity}>
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+   } else {
+     return (
+       <div>
+         <input
+            type="number"
+            placeholder="Amount"
+            onChange={async (e) => {
+              setSwapAmount(e.target.value || "");
+              // Calculate the amount of tokens user would receive after the swap
+              await _getAmountOfTokensReceivedFromSwap(e.target.value || "0");
+            }}
+            className={styles.input}
+            value={swapAmount}
+          />
+          <select
+            className={styles.select}
+            name="dropdown"
+            id="dropdown"
+            onChange={async () => {
+              setEthSelected(!ethSelected);
+              // Initialize the values back to zero
+              await _getAmountOfTokensReceivedFromSwap(0);
+              setSwapAmount("");
+            }}
+          >
+            <option value="eth">Ethereum</option>
+            <option value="cryptoDevToken">Crypto Dev Token</option>
+          </select>
+          <br />
+          <div className={styles.inputDiv}>
+            {/* Convert the BigNumber to string using the formatEther function from ethers.js */}
+            {ethSelected
+              ? `You will get ${utils.formatEther(
+                  tokenToBeReceivedAfterSwap
+                )} Crypto Dev Tokens`
+              : `You will get ${utils.formatEther(
+                  tokenToBeReceivedAfterSwap
+                )} Eth`}
+          </div>
+          <button className={styles.button1} onClick={_swapTokens}>
+            Swap
+          </button>
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div>
+      <Head>
+        <title>Crypto Devs</title>
+        <meta name="description" content="Exchange-Dapp" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <div className={styles.main}>
+        <div>
+          <h1 className={styles.title}>Welcome to Crypto Devs Exchange!</h1>
+          <div className={styles.description}>
+            Exchange Ethereum &#60;&#62; Crypto Dev Tokens
+          </div>
+          <div>
+            <button
+              className={styles.button}
+              onClick={() => {
+                setLiquidityTab(!liquidityTab);
+              }}
+            >
+              Liquidity
+            </button>
+            <button
+              className={styles.button}
+              onClick={() => {
+                setLiquidityTab(false);
+              }}
+            >
+              Swap
+            </button>
+          </div>
+          {renderButton()}
+        </div>
+        <div>
+          <img className={styles.image} src="./cryptodev.svg" />
+        </div>
+      </div>
+
+      <footer className={styles.footer}>
+        Made with &#10084; by Crypto Devs
+      </footer>
+    </div>
+  );
 }
