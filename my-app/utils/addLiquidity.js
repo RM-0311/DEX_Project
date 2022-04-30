@@ -9,7 +9,7 @@ import {
 /**
  * addLiquidity helps add liquidity to the exchange,
  * If the user is adding initial liquidity, user decides the ether and CD tokens he wants to add
- * to the exchange. If he is adding the liquidity after initial liquidity has already been addd
+ * to the exchange. If he is adding the liquidity after initial liquidity has already been add
  * then we calculate the cd tokens he can add given the eth he wants to add by keeping the ratios 
  * constant
  */
@@ -57,7 +57,7 @@ export const calculateCD = async (
     etherBalanceContract,
     cdTokenReserve
 ) => {
-    // '_addEther' is a sting, we need to convert it to a Bignumber before we can do our calculations
+    // '_addEther' is a sting, we need to convert it to a BigNumber before we can do our calculations
     // We do that using 'parseEther' function from 'ether.js'
     const _addEtherAmountWei = utils.parseEther(_addEther);
     // Ratio needs to be maintained when we add liquidity
