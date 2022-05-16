@@ -35,7 +35,7 @@ export const addLiquidity = async (
         // to take the required number CD tokens out of his contract
         let tx = await tokenContract.approve(
             EXCHANGE_CONTRACT_ADDRESS,
-            addCDAmountWei.toSting()
+            addCDAmountWei.toString()
         );
         await tx.wait();
         // After the contract has the approval, add the ether and cd tokens in the liquidity
